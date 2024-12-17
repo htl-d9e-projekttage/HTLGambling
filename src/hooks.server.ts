@@ -1,4 +1,4 @@
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth.js';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
@@ -18,6 +18,10 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 
 	event.locals.user = user;
 	event.locals.session = session;
+
+	if (user?.verified === 0 && event.url.pathname !== '/auth/verify') {
+		redirect(302, '/auth/verify');
+	}
 
 	return resolve(event);
 };

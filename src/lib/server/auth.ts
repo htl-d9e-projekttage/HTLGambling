@@ -30,8 +30,7 @@ export async function validateSessionToken(token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const [result] = await db
 		.select({
-			// Adjust user table here to tweak returned data
-			user: { id: table.user.id, username: table.user.username },
+			user: { id: table.user.id, username: table.user.username, age: table.user.age, verified: table.user.verified },
 			session: table.session
 		})
 		.from(table.session)
@@ -78,4 +77,11 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 	event.cookies.delete(sessionCookieName, {
 		path: '/'
 	});
+}
+
+export function verifyUser(userId: string) {
+	return db
+		.update(table.user)
+		.set({ verified: 1 })
+		.where(eq(table.user.id, userId));
 }
