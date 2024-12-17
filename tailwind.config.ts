@@ -27,6 +27,10 @@ export default {
 				  900: '#A5371B'
 				},
 			},
+		},
+		fontFamily: {
+			'inta': ['Arial'],
+			'cas': ['Cascadia Code']
 		}
 	},
 	plugins: [typography, forms, containerQueries, flowbitePlugin]
