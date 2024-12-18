@@ -23,6 +23,12 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		redirect(302, '/auth/verify');
 	}
 
+	if (user?.verified === 1 && event.url.pathname === '/auth/verify') {
+		redirect(302, '/');
+	}
+
+	if (user) auth.updateStreak(user?.id);
+
 	return resolve(event);
 };
 

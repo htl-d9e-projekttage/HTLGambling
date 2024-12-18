@@ -14,9 +14,13 @@
 		{/if}
 		<Heading tag="h2" class="mb-4 text-center">Hi, {data.user.username}</Heading>
 		<p class="mb-4 text-center">You are logged in!</p>
-		<p class="mb-4 text-center">Your age is {data.user.age}</p>
+		<p class="mb-4 text-center">Your age is {data.user.age} and you have a balance of <mark>€ {data.user.money/100}</mark></p>
+		<p class="mb-4 text-center">Streak: {data.user.streak} days</p>
 		<form method="post" action="?/logout" use:enhance>
 			<Button type="submit">Sign out</Button>
+		</form>
+		<form method="post" class="mt-2" action="?/delete" use:enhance>
+			<Button type="submit">Delete Account</Button>
 		</form>
 	</Card>
 </main>
