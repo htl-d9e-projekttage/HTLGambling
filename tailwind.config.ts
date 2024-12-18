@@ -35,7 +35,7 @@ export default {
 		},
 		fontFamily: {
 			'inta': ['Arial'],
-			'cas': ['Cascadia Code']
+			'cas': ['Cascadia Code', 'Fira Code', 'monospace'],
 		}
 	},
 	plugins: [typography, forms, containerQueries, flowbitePlugin]
