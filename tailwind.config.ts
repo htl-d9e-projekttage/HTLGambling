@@ -12,8 +12,10 @@ export default {
 	darkMode: 'class',
 	theme: {
 		extend: {
+			zIndex: {
+				'100': '100'
+			},
 			colors: {
-				// flowbite-svelte
 				primary: {
 				  50: '#FFF5F2',
 				  100: '#FFF1EE',
@@ -26,6 +28,9 @@ export default {
 				  800: '#CC4522',
 				  900: '#A5371B'
 				},
+				secondary: '#F09730',
+				base: '#24273a',
+				crust: '#181926',
 			},
 		},
 		fontFamily: {
