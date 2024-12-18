@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer,  } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
@@ -6,7 +6,7 @@ export const user = sqliteTable('user', {
 	username: text('username').notNull().unique(),
 	passwordHash: text('password_hash').notNull(),
 	verified: integer('verified').notNull().default(0),
-	money: integer('money').notNull().default(20000), // !this is cents not dollars
+	money: integer('money').notNull().default(20000), // !this is cents not euros
 	streak: integer('streak').notNull().default(0),
 	lastLogin: integer('last_login', { mode: 'timestamp' })
 });
