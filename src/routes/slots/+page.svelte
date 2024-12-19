@@ -21,6 +21,7 @@
 	let lastStart = $state(false);
 	let currentSlotFace = $state(slot);
 
+	const winSound = new Audio('/sounds/win.mp3');
 
 	let borderColor1:undefined|string = $state(undefined);
 	let borderColor2:undefined|string = $state(undefined);
@@ -33,6 +34,17 @@
 	let borderColor9:undefined|string = $state(undefined);
 
 	function updateColor(colorMap: string[][][], index = 0) {
+		if (colorMap[index].length != 3 || colorMap[index][0].length != 3) {
+			borderColor1 = undefined;
+			borderColor2 = undefined;
+			borderColor3 = undefined;
+			borderColor4 = undefined;
+			borderColor5 = undefined;
+			borderColor6 = undefined;
+			borderColor7 = undefined;
+			borderColor8 = undefined;
+			borderColor9 = undefined;
+		}
 		borderColor1 = colorMap[index][0][0];
 		borderColor2 = colorMap[index][0][1];
 		borderColor3 = colorMap[index][0][2];
@@ -45,10 +57,16 @@
 	}
 
 	function spin() {
-		if (spinIsOnGoing || bet > money) {
-							errorMsg = 'Balance too low';
+		if (spinIsOnGoing) {
 			return;
 		}
+		if (bet > money) {
+			errorMsg = 'Balance too low';
+			return;
+		}
+		winSound.pause();
+		winSound.currentTime = 0;
+		clearInterval(rotateInterval);
 		borderColor1 = undefined;
 		borderColor2 = undefined;
 		borderColor3 = undefined;
@@ -102,11 +120,12 @@
 
 	let rotateInterval: string | number | NodeJS.Timeout | undefined;
 
+	
 	function startIntervals() {
 		setTimeout(() => {
 			lane1Done = false;
 			lane1Interval = setInterval(() => {
-				lane1Index = (lane1Index + 1) % (currentSlotFace.lane1.length - 2);
+				lane1Index = (lane1Index + 1) % (currentSlotFace.lane1.length);
 				if (lane1Done && currentSlotFace.winIndex1 == lane1Index) {
 					clearInterval(lane1Interval);
 					lane1Done = false;
@@ -116,7 +135,7 @@
 
 		setTimeout(() => {
 			lane2Interval = setInterval(() => {
-				lane2Index = (lane2Index + 1) % (currentSlotFace.lane2.length - 2);
+				lane2Index = (lane2Index + 1) % (currentSlotFace.lane2.length);
 				if (lane2Done && currentSlotFace.winIndex2 == lane2Index) {
 					clearInterval(lane2Interval);
 					lane2Done = false;
@@ -127,14 +146,14 @@
 		setTimeout(() => {
 			lastStart = true;
 			lane3Interval = setInterval(() => {
-				lane3Index = (lane3Index + 1) % (currentSlotFace.lane3.length - 2);
+				lane3Index = (lane3Index + 1) % (currentSlotFace.lane3.length);
 				if (lane3Done && currentSlotFace.winIndex3 == lane3Index) {
 					clearInterval(lane3Interval);
 					money += currentSlotFace.moneyWon / 100;
 					if (currentSlotFace.moneyWon > 0) {
+						winSound.play();
 						errorMsg = `You won $${currentSlotFace.moneyWon / 100}`;
-					}
-					else {500
+					} else {
 						errorMsg = 'You lost';
 					}
 					lane3Done = false;
@@ -178,7 +197,15 @@
 			lane1Index = currentSlotFace.winIndex1 - 3;
 			lane2Index = currentSlotFace.winIndex2 - 6;
 			lane3Index = currentSlotFace.winIndex3 - 10;
-
+			if (lane1Index < 0) {
+				lane1Index += currentSlotFace.lane1.length-1;
+			}
+			if (lane2Index < 0) {
+				lane2Index += currentSlotFace.lane2.length-2;
+			}
+			if (lane3Index < 0) {
+				lane3Index += currentSlotFace.lane3.length-3;
+			}
 	}
 
 	//on spacebar press spinclearInterval
@@ -200,52 +227,52 @@
     <div id="file1">
         <img
             class={borderColor1 ? `border-[${borderColor1}] border-8` : ''}
-            src={`/symbols/Logos/${currentSlotFace.lane1[lane1Index + 2]}${currentSlotFace.lane1[lane1Index + 2] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane1[lane1Index + 2]}
+            src={`/symbols/Logos/${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}
         />
         <img
             class={borderColor2 ? `border-[${borderColor2}] border-8` : ''}
-            src={`/symbols/Logos/${currentSlotFace.lane1[lane1Index + 1]}${currentSlotFace.lane1[lane1Index + 1] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane1[lane1Index + 1]}
+            src={`/symbols/Logos/${currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length]}${currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length]}
         />
         <img
             class={borderColor3 ? `border-[${borderColor3}] border-8` : ''}
-            src={`/symbols/Logos/${currentSlotFace.lane1[lane1Index]}${currentSlotFace.lane1[lane1Index] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane1[lane1Index]}
+            src={`/symbols/Logos/${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}
         />
     </div>
     <div id="file2">
         <img
             class={borderColor4 ? `border-[${borderColor4}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane2[lane2Index + 2]}${currentSlotFace.lane2[lane2Index + 2] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane2[lane2Index + 2]}
+            src={`symbols/Logos/${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}
         />
         <img
             class={borderColor5 ? `border-[${borderColor5}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane2[lane2Index + 1]}${currentSlotFace.lane2[lane2Index + 1] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane2[lane2Index + 1]}
+            src={`symbols/Logos/${currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length]}${currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length]}
         />
         <img
             class={borderColor6 ? `border-[${borderColor6}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane2[lane2Index]}${currentSlotFace.lane2[lane2Index] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane2[lane2Index]}
+            src={`symbols/Logos/${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}
         />
     </div>
     <div id="file3">
         <img
             class={borderColor7 ? `border-[${borderColor7}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane3[lane3Index + 2]}${currentSlotFace.lane3[lane3Index + 2] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane3[lane3Index + 2]}
+            src={`symbols/Logos/${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}
         />
         <img
             class={borderColor8 ? `border-[${borderColor8}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane3[lane3Index + 1]}${currentSlotFace.lane3[lane3Index + 1] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane3[lane3Index + 1]}
+            src={`symbols/Logos/${currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length]}${currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length]}
         />
         <img
             class={borderColor9 ? `border-[${borderColor9}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane3[lane3Index]}${currentSlotFace.lane3[lane3Index] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane3[lane3Index]}
+            src={`symbols/Logos/${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
+            alt={currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}
         />
     </div>
 </div>
