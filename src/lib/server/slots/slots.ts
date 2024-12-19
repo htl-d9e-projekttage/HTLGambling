@@ -156,18 +156,18 @@ export class Slots {
 
 		let finalFace: finalFace = {
 			1: {
-				1: lane1[(winIndex1 + 2) % (len - 3)],
-				2: lane1[(winIndex1 + 1) % (len - 3)],
+				1: lane1[(winIndex1 + 2) % (len)],
+				2: lane1[(winIndex1 + 1) % (len)],
 				3: lane1[winIndex1]
 			},
 			2: {
-				1: lane2[(winIndex2 + 2) % (len - 3)],
-				2: lane2[(winIndex2 + 1) % (len - 3)],
+				1: lane2[(winIndex2 + 2) % (len)],
+				2: lane2[(winIndex2 + 1) % (len)],
 				3: lane2[winIndex2]
 			},
 			3: {
-				1: lane3[(winIndex3 + 2) % (len - 3)],
-				2: lane3[(winIndex3 + 1) % (len - 3)],
+				1: lane3[(winIndex3 + 2) % (len)],
+				2: lane3[(winIndex3 + 1) % (len)],
 				3: lane3[winIndex3]
 			}
 		};
