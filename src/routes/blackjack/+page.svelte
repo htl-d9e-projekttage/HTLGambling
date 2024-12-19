@@ -93,7 +93,7 @@
     onMount(fetchGame);
 </script>
 
-<main class="container w-full h-screen flex flex-col items-center">
+<main class="w-full h-screen flex flex-col items-center">
     <CardsDefinitions/>
     
     {#if !loaded}
@@ -102,12 +102,12 @@
         {#if $winner === 'Player'}
             <FallingMoney />
         {/if}
-        <p class="font-bold text-xl">Balance: € {$balance/100}</p>
+        <p class="font-bold text-5xl">Balance: € {$balance/100}</p>
         {#if $turn === null && $winner === null}
-            <div>
+            <div class="flex flex-col">
                 <Label for="stake">Enter your stake(€):</Label>
-                <Input type="number" id="stake" bind:value={stake} min="1" />
-                <Button class="mt-2" onclick={startGame}>Start Game</Button>
+                <Input class="w-56 text-2xl ring-cyan-600" type="number" id="stake" bind:value={stake} min="1" />
+                <Button class="mt-2 bg-cyan-600 select-none dark:bg-primary-700" onclick={startGame}>Start Game</Button>
             </div>
         {:else}
             <section>
@@ -131,8 +131,10 @@
                 <p>Score: {$game?.dealer.score}</p>
 
                 {#if $turn === 'Player'}
-                    <Button onclick={() => playerTurn('draw')}>Draw</Button>
-                    <Button onclick={() => playerTurn('stop')}>Stop</Button>
+                <div class="flex justify-center">
+                    <Button class="m-1 w-full bg-cyan-600 dark:bg-primary-700" onclick={() => playerTurn('draw')}>Draw</Button>
+                    <Button class="m-1 w-full bg-cyan-600 dark:bg-primary-700" onclick={() => playerTurn('stop')}>Stop</Button>
+                </div>
                 {/if}
             </section>
             <Modal open={$winner !== null}>
