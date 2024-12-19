@@ -1,4 +1,4 @@
-import { getMoney, updateMoney } from "$lib/server/auth.js";
+import { addMoney, getMoney } from "$lib/server/auth.js";
 import { slotUserMap } from "$lib/server/serverStores.js";
 import Slots from "$lib/server/slots/slots";
 
@@ -33,7 +33,11 @@ export const POST = async (request) => {
     let ret = slot.getCurrentSpin();
 
     //update user money
-    updateMoney(request.locals.user.id, slot.getWin()-slot.getBet());
+    console.log(ret.moneyWon);
+    console.log(Number(bet));
+    console.log(ret.moneyWon - Number(bet));
+    console.log("money: "+ getMoney(request.locals.user.id));
+    await addMoney(request.locals.user.id, (ret.moneyWon- Number(bet)));
 
     return new Response(JSON.stringify(ret), {
         headers: {
