@@ -1,10 +1,10 @@
 <script lang="ts">
 	import '../app.css';
 	let { children } = $props();
-	import { AccordionItem, Accordion, Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
+	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
 </script>
   
-<Navbar class="border-b-cyan-600 border-b-4 dark:border-b-orange-400 flex flex-col md:flex-row justify-between w-full items-center relative">
+<Navbar class="border-b-cyan-600 border-b-4 dark:border-b-orange-400 flex flex-col md:flex-row justify-between w-full items-center relative z-50">
 
     <div class="flex-1 flex items-center justify-start">
 		<NavUl>
