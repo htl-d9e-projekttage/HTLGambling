@@ -35,12 +35,12 @@ export const buildDeck = (): BlackjackCard[] => {
 export const calculateScore = (cards: BlackjackCard[]): number => {
 	let score = 0;
 	for (const card of cards) {
-        // If the card is an ace and the score is over 21, treat the ace as a 1
-        if (card.rank === '1' && score + SCORES[card.rank] > 21) {
-            score += 1;
-        } else {
-		    score += SCORES[card.rank];
-        }
+		// If the card is an ace and the score is over 21, treat the ace as a 1
+		if (card.rank === '1' && score + SCORES[card.rank] > 21) {
+			score += 1;
+		} else {
+			score += SCORES[card.rank];
+		}
 	}
 	return score;
 };

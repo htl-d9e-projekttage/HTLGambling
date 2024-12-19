@@ -1,17 +1,19 @@
-import OpenAI from "openai";
+import OpenAI from 'openai';
 import { env } from '$env/dynamic/private';
 
 const API_KEY = env.OPENAI_API_KEY;
 
 export async function sendAIVerificaition(input: string) {
-    const client = new OpenAI({
-        baseURL: "https://models.inference.ai.azure.com",
-        apiKey: API_KEY
-    });
-    try {
-        const response = await client.chat.completions.create({
-            messages: [
-            { role:"system", content: `<Instruction>
+	const client = new OpenAI({
+		baseURL: 'https://models.inference.ai.azure.com',
+		apiKey: API_KEY
+	});
+	try {
+		const response = await client.chat.completions.create({
+			messages: [
+				{
+					role: 'system',
+					content: `<Instruction>
         The user is doing a gambling site verification. Your job is to accept or reject the user based on his statements. The statement are in German or maybe English, the questions are in German (beneath here). Your response should be JSON and should contain the boolean "approved" and the string "explination"
         If you think the user is legally and morally allowed to gamble, return true in the json. Always provide a explination. it will be shown to the user. The questions below.
         </Instruction>
@@ -52,20 +54,27 @@ export async function sendAIVerificaition(input: string) {
         Sollten Sie in dieser PLF gelogen haben, geben Sie bitte an, bei welcher Frage und warum.  
         Sollten Sie von jemandem abgeschrieben haben, geben Sie bitte an, von wem.  
         **Vielen Dank für Ihre Ehrlichkeit!**
-        </Questions>` },
-          { role:"user", content: input }
-        ],
-        model: "gpt-4o-mini",
-        temperature: 1,
-        max_tokens: 4096,
-        top_p: 1
-      });
+        </Questions>`
+				},
+				{ role: 'user', content: input }
+			],
+			model: 'gpt-4o-mini',
+			temperature: 1,
+			max_tokens: 4096,
+			top_p: 1
+		});
 
-    const content = response?.choices[0]?.message?.content || "{\"approved\": false,\"explanation\": \"The AI failed to respond to the user's request. Please try again later.\",\"error\": true}";
-    
-      return JSON.parse(content.replaceAll("```json", "").replaceAll("```", ""));
-    } catch (error) {
-        console.error(error);
-        return {approved: false, explanation: "The AI failed to respond to the user's request. Please try again later.", error: true};
-    }
+		const content =
+			response?.choices[0]?.message?.content ||
+			'{"approved": false,"explanation": "The AI failed to respond to the user\'s request. Please try again later.","error": true}';
+
+		return JSON.parse(content.replaceAll('```json', '').replaceAll('```', ''));
+	} catch (error) {
+		console.error(error);
+		return {
+			approved: false,
+			explanation: "The AI failed to respond to the user's request. Please try again later.",
+			error: true
+		};
+	}
 }

@@ -30,7 +30,7 @@ export class BlackjackDeck {
 	private genNum(): number {
 		const hash = hmacSHA256(this.#clientSeed, this.#nonce);
 		const first8Chars = hash.slice(0, 8);
-		const randomNumber = parseInt(first8Chars, 16) / 0xFFFFFFFF; // Normalize to a number between 0 and 1
+		const randomNumber = parseInt(first8Chars, 16) / 0xffffffff; // Normalize to a number between 0 and 1
 		this.#nonce++;
 		return randomNumber; // Return a number between 0 and 1
 	}
@@ -91,7 +91,7 @@ export class BlackjackDealer {
 		this.score = calculateScore(this.hand);
 		this.#calcScore = calculateScore(this.hand.concat(this.#hiddenCard ? [this.#hiddenCard] : []));
 	}
-	
+
 	revealHiddenCard(): void {
 		if (this.#hiddenCard) {
 			this.hand.push(this.#hiddenCard);

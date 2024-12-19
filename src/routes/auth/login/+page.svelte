@@ -6,7 +6,7 @@
 	let { form }: { form: ActionData } = $props();
 </script>
 
-<main class="container w-full mx-auto flex justify-center items-center h-screen">
+<main class="container mx-auto flex h-screen w-full items-center justify-center">
 	<Card class="w-full" size="md">
 		<Heading tag="h1" class="mb-4 text-center">Login</Heading>
 		<form method="post" action="?/login" use:enhance>
