@@ -1,4 +1,5 @@
 <script lang="ts">
+	import FallingMoney from '$lib/components/FallingMoney.svelte';
 	import type { PageServerData } from './$types';
 	import { Button, Input, Table, TableBody, TableBodyCell, TableBodyRow } from 'flowbite-svelte';
 
@@ -223,9 +224,12 @@
 
 	let isStopping = $state(false);
 </script>
-<div class="flex h-full items-center justify-center">
-    <div id="file1">
-        <img
+<div class="flex h-full items-center justify-center mt-20">
+	{#if !spinIsOnGoing && currentSlotFace.moneyWon > 0}
+		<FallingMoney />
+	{/if}
+	<div id="file1" class="border-8 border-crust border-r-0">
+		<img
             class={borderColor1 ? `border-[${borderColor1}] border-8` : ''}
             src={`/symbols/Logos/${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
             alt={currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}
@@ -240,9 +244,9 @@
             src={`/symbols/Logos/${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
             alt={currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}
         />
-    </div>
-    <div id="file2">
-        <img
+	</div>
+	<div id="file2" class="border-8 border-crust border-l-0 border-r-0">
+		<img
             class={borderColor4 ? `border-[${borderColor4}] border-8` : ''}
             src={`symbols/Logos/${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
             alt={currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}
@@ -257,9 +261,9 @@
             src={`symbols/Logos/${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
             alt={currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}
         />
-    </div>
-    <div id="file3">
-        <img
+	</div>
+	<div id="file3" class="border-8 border-crust border-l-0">
+		<img
             class={borderColor7 ? `border-[${borderColor7}] border-8` : ''}
             src={`symbols/Logos/${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
             alt={currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}
@@ -274,25 +278,57 @@
             src={`symbols/Logos/${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
             alt={currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}
         />
-    </div>
-</div>
-<p>Money: ${money}</p>
-<input bind:value={bet} min={1} max={money} type="number" class="text-black"/> <br>
-<Button disabled={(!lastStart && spinIsOnGoing) || isStopping} on:click={() =>{
+	</div>
+	<div class="p-7 bg-crust">
+		<p class="mb-1 text-xl text-white font-inta font-bold">Money: ${money}</p>
+		<input class="mt-1 mb-1 w-full text-black" bind:value={bet} min={1} max={money} type="number"/> <br>
+		<Button class="mt-1 w-full font-inta font-bold" disabled={(!lastStart && spinIsOnGoing) || isStopping} on:click={() =>{
 			if (!spinIsOnGoing){
 				spin();
 			} else {
-			stopSpin();
+				stopSpin();
 			}
-}}>
+		}}>
 	{spinIsOnGoing ? 'STOP!!!' : 'Spin'}
-</Button>
-{#if errorMsg}
-	<p>{errorMsg}</p>
-{/if}
+		</Button>
+		{#if errorMsg}
+		<p>{errorMsg}</p>
+		{/if}
+	</div>
+</div>
+
 <style>
 	img {
-		width: 250px;
-		height: 250px;
+		width: 200px;
+		height: 200px;
 	}
 </style>
+
+<div class="invisible border-[#FF0000]"></div>
+<div class="invisible border-[#00FF00]"></div>
+<div class="invisible border-[#0000FF]"></div>
+<div class="invisible border-[#FFFF00]"></div>
+<div class="invisible border-[#FF00FF]"></div>
+<div class="invisible border-[#00FFFF]"></div>
+<div class="invisible border-[#800000]"></div>
+<div class="invisible border-[#800000]"></div>
+
+
+
+<!--
+    		let colors = [
+			"#808000", // Olive
+			"#008000", // Dark Green
+			"#800080", // Purple
+			"#008080", // Teal
+			"#000080", // Navy
+			"#FFA500", // Orange
+			"#A52A2A", // Brown
+			"#8A2BE2", // Blue Violet
+			"#5F9EA0", // Cadet Blue
+			"#D2691E", // Chocolate
+			"#FF7F50", // Coral
+			"#6495ED", // Cornflower Blue
+			"#DC143C"  // Crimson
+		];
+-->
