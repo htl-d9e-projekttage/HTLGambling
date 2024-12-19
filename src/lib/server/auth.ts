@@ -83,6 +83,10 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 	});
 }
 
+export function getUserById(userId: string) {
+	return db.select().from(table.user).where(eq(table.user.id, userId)).get();
+}
+
 export function verifyUser(userId: string) {
 	return db
 		.update(table.user)
