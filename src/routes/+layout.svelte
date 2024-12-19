@@ -8,7 +8,7 @@
 	class="relative z-50 flex w-full flex-col items-center justify-between border-b-4 border-b-cyan-600 dark:border-b-orange-400 md:flex-row"
 >
 	<div class="flex flex-1 items-center justify-start">
-		<NavUl ulClass="border-none">
+		<NavUl>
 			<NavLi href="/">Home</NavLi>
 			<NavLi href="/slots">Slots</NavLi>
 			<NavLi href="/blackjack">Blackjack</NavLi>
