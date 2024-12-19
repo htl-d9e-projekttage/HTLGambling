@@ -13,3 +13,15 @@
     Our app could improve your <b>mental Health</b>, provide a sense of peace and overall grade you up. It is possible that this website could <b>cure your depression</b>.
     It could also help in bad <b>financial situations</b>.
 </p>
+<h1 class="font-cal text-7xl italic underline mt-6">Are you deeply in debt ?</h1>
+<div class="border-solid border-2 mt-5">
+    <div class="m-1">
+        <p class="italic">Contact one of our <b>trusted employees</b>:
+            <ul class="ml-10 list-disc">
+                <li><span class="italic mr-5 bg-gray-500 rounded-md pr-1 pl-1">Senior Developer of Blackjack Systems and Secure Authentication Solutions</span><a href="https://github.com/gamersi">Simon</a></li>
+                <li><span class="italic mr-5 bg-gray-500 rounded-md pr-1 pl-1">Senior Developer of Slot Game Systems and Advanced Algorithm Integration</span><a href="https://github.com/137-Trimethylxanthin">Max</a></li>
+                <li><span class="italic mr-5 bg-gray-500 rounded-md pr-1 pl-1">Director of Strategic Design Innovation and Experience Optimization</span><a href="https://github.com/DaPikeHunter">Tobi</a></li>
+                <li><span class="italic mr-5 bg-gray-500 rounded-md pr-1 pl-1">Director of Integrated Design Strategy and Creative Innovation Leadership</span><a href="https://github.com/Block1207">Sascha</a></li>
+            </ul>
+        </div>
+</div>

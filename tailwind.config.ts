@@ -36,6 +36,7 @@ export default {
 		fontFamily: {
 			'inta': ['Arial'],
 			'cas': ['Cascadia Code', 'Fira Code', 'monospace'],
+			'cal': ['']
 		}
 	},
 	plugins: [typography, forms, containerQueries, flowbitePlugin]
