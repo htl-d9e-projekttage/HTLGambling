@@ -26,7 +26,6 @@ export const actions: Actions = {
             await auth.verifyUser(event.locals.user?.id ?? '');
             return redirect(302, '/auth?approved=true&explanation=' + encodeURIComponent(aiRes.explanation));
         } else {
-            console.log(aiRes);
             return fail(400, { message: aiRes.explanation });
         }
     }
