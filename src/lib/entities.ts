@@ -7,6 +7,8 @@ export interface Spin {
     winIndex3: number;
     finalFace: finalFace;
     moneyWon: number;
+    borders: string[][][];
+    combo: number;
 }
 
 export interface finalFace {

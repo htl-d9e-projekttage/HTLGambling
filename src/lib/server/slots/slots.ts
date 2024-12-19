@@ -50,7 +50,8 @@ export class Slots {
 	private oldMoney: number = 0;
 	private totalProfit: number = 0;
 	private totalSpins: number = 0;
-
+	private tempBorders: string[][][] = [[[], [], []], [[], [], []], [[], [], []]];
+	private combo: number = 0;
 
 	private currSpin: Spin = {
 		lane1: [],
@@ -76,7 +77,9 @@ export class Slots {
 				3: ""
 			}
 		},
-		moneyWon: 0
+		combo: 0,
+		moneyWon: 0,
+		borders: [[[], [], []], [[], [], []], [[], [], []]],
 	}
 
 	public constructor(money: number) {
@@ -105,7 +108,9 @@ export class Slots {
 					3: "9"
 				}
 			},
-			moneyWon: 0
+			moneyWon: 0,
+			borders: [[[], [], []], [[], [], []], [[], [], []]],
+			combo: 0
 		}
 	}
 
@@ -122,8 +127,15 @@ export class Slots {
 	}
 
 	public async spin(): Promise<void> {
+		if (this.bet > this.money) {
+			this.bet = this.money;
+			if (this.bet === 0) {
+				throw new Error("Not enough money");
+			}
+		}
 		this.oldMoney = this.money;
 		this.win = 0;
+		this.combo = 0;
 		this.money -= this.bet;
 		
 		let random = this.genNum();
@@ -158,7 +170,7 @@ export class Slots {
 				2: lane3[(winIndex3 + 1) % (len - 3)],
 				3: lane3[winIndex3]
 			}
-		}
+		};
 
 		console.log();
 
@@ -181,6 +193,7 @@ export class Slots {
 		console.log("money: ", this.money);
 		console.log("totalProfit: ", this.totalProfit);
 		console.log("totalSpins: ", this.totalSpins);
+		console.log("multiplayer: ", this.winMulti);
 		console.log("------------");
 
 
@@ -193,6 +206,8 @@ export class Slots {
 			winIndex3: winIndex3,
 			finalFace: finalFace,
 			moneyWon: this.win,
+			borders: this.tempBorders,
+			combo: this.combo
 		};
 
 		console.log("2");
@@ -203,7 +218,8 @@ export class Slots {
 			money: this.money,
 			oldMoney: this.oldMoney,
 			winType: this.winType,
-			winSymbol: this.winSymbol
+			winSymbol: this.winSymbol,
+			multiplayer: this.winMulti
 		});
 
 
@@ -222,130 +238,265 @@ export class Slots {
 		// - 3 in a col in a "V" shape -_-
 		//every win has its own multiplier and the win multiplayer is added to the this.winMulti
 		
+		this.tempBorders = [[[], [], []], [[], [], []], [[], [], []]];
 		this.winType = "";
 		this.winSymbol = "";
 		this.winMulti = 1;
 
-		//lane cases
-		//lane 1
+		let colors = [
+			"#FF0000", // Red
+			"#00FF00", // Green
+			"#0000FF", // Blue
+			"#FFFF00", // Yellow
+			"#FF00FF", // Magenta
+			"#00FFFF", // Cyan
+			"#800000", // Maroon
+			"#808000", // Olive
+			"#008000", // Dark Green
+			"#800080", // Purple
+			"#008080", // Teal
+			"#000080", // Navy
+			"#FFA500", // Orange
+			"#A52A2A", // Brown
+			"#8A2BE2", // Blue Violet
+			"#5F9EA0", // Cadet Blue
+			"#D2691E", // Chocolate
+			"#FF7F50", // Coral
+			"#6495ED", // Cornflower Blue
+			"#DC143C"  // Crimson
+		];
+		// lane cases
+		// lane 1
 		if (currSpin[1][1] === currSpin[1][2] && currSpin[1][2] === currSpin[1][3]) {
 			this.winType = "lane";
 			this.winSymbol = currSpin[1][1];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][1]);
+			let color = colors.pop() || "#000000";
+
+			this.tempBorders[this.combo][0][0]=color;
+			this.tempBorders[this.combo][0][1]=color;
+			this.tempBorders[this.combo][0][2] = color;
+			
+			this.combo += 1;
 		}
-		//lane 2
+		// lane 2
 		if (currSpin[2][1] === currSpin[2][2] && currSpin[2][2] === currSpin[2][3]) {
 			this.winType = "lane";
 			this.winSymbol = currSpin[2][1];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[2][1]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][1][0]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][1][2]=color;
+			this.combo += 1;
 		}
-		//lane 3
+		// lane 3
 		if (currSpin[3][1] === currSpin[3][2] && currSpin[3][2] === currSpin[3][3]) {
 			this.winType = "lane";
 			this.winSymbol = currSpin[3][1];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[3][1]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][2][0]=color;
+			this.tempBorders[this.combo][2][1]=color;
+			this.tempBorders[this.combo][2][2]=color;
+			this.combo += 1;
 		}
 
-		//lane wise
-		//column 1
+		// column cases
+		// column 1
 		if (currSpin[1][1] === currSpin[2][1] && currSpin[2][1] === currSpin[3][1]) {
 			this.winType = "column";
 			this.winSymbol = currSpin[1][1];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][1]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][0]=color;
+			this.tempBorders[this.combo][1][0]=color;
+			this.tempBorders[this.combo][2][0]=color;
+			this.combo += 1;
 		}
-		//column 2
+		// column 2
 		if (currSpin[1][2] === currSpin[2][2] && currSpin[2][2] === currSpin[3][2]) {
 			this.winType = "column";
 			this.winSymbol = currSpin[1][2];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][2]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][1]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][2][1]=color;
+			this.combo += 1;
 		}
-		//column 3
+		// column 3
 		if (currSpin[1][3] === currSpin[2][3] && currSpin[2][3] === currSpin[3][3]) {
 			this.winType = "column";
 			this.winSymbol = currSpin[1][3];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][3]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][2]=color;
+			this.tempBorders[this.combo][1][2]=color;
+			this.tempBorders[this.combo][2][2]=color;
+			this.combo += 1;
 		}
 
-		//diagonal cases
-		//diagonal 1
+		// diagonal cases
+		// diagonal 1
 		if (currSpin[1][1] === currSpin[2][2] && currSpin[2][2] === currSpin[3][3]) {
 			this.winType = "diagonal";
 			this.winSymbol = currSpin[1][1];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][1]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][0]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][2][2]=color;
+			this.combo += 1;
 		}
-		//diagonal 2
+		// diagonal 2
 		if (currSpin[1][3] === currSpin[2][2] && currSpin[2][2] === currSpin[3][1]) {
 			this.winType = "diagonal";
 			this.winSymbol = currSpin[1][3];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][3]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][2]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][2][0]=color;
+			this.combo += 1;
 		}
-		//V cases
-		//V top mid top
+
+		// V cases
+		// V top mid top
 		if (currSpin[1][2] === currSpin[2][1] && currSpin[2][1] === currSpin[3][2]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][2];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][2]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][1]=color;
+			this.tempBorders[this.combo][1][0]=color;
+			this.tempBorders[this.combo][2][1]=color;
+			this.combo += 1;
 		}
-		//V mid top mid
+		// V mid top mid
 		if (currSpin[1][1] === currSpin[2][2] && currSpin[2][2] === currSpin[3][1]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][1];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][1]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][0]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][2][0]=color;
+			this.combo += 1;
 		}
-		//V mid bot mid
+		// V mid bot mid
 		if (currSpin[1][2] === currSpin[2][3] && currSpin[2][3] === currSpin[3][2]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][3];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][3]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][1]=color;
+			this.tempBorders[this.combo][1][2]=color;
+			this.tempBorders[this.combo][2][1]=color;
+			this.combo += 1;
 		}
-		//V bot mid bot
+		// V bot mid bot
 		if (currSpin[1][3] === currSpin[2][2] && currSpin[2][2] === currSpin[3][3]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][2];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][2]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][2]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][2][2]=color;
+			this.combo += 1;
 		}
-		//Side V cases
-		//V left mid left
+		// Side V cases
+		// V left mid left
 		if (currSpin[1][1] === currSpin[2][2] && currSpin[2][2] === currSpin[3][3]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][1];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][1]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][0]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][2][2]=color;
+			this.combo += 1;
 		}
-		//V mid left mid
+		// V mid left mid
 		if (currSpin[1][2] === currSpin[2][3] && currSpin[2][3] === currSpin[3][2]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][2];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][2]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][1]=color;
+			this.tempBorders[this.combo][1][2]=color;
+			this.tempBorders[this.combo][2][1]=color;
+			this.combo += 1;
 		}
-		//V mid right mid
+		// V mid right mid
 		if (currSpin[1][2] === currSpin[2][1] && currSpin[2][1] === currSpin[3][2]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][2];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][2]);
+			let color = colors.pop() || "#000000";
+
+
+			this.tempBorders[this.combo][0][1]=color;
+			this.tempBorders[this.combo][1][0]=color;
+			this.tempBorders[this.combo][2][1]=color;
+			this.combo += 1;
 		}
-		//V right mid right
+		// V right mid right
 		if (currSpin[1][3] === currSpin[2][2] && currSpin[2][2] === currSpin[3][1]) {
 			this.winType = "V";
 			this.winSymbol = currSpin[1][3];
 			//@ts-ignore
 			this.winMulti *= this.getWinMultiplier(currSpin[1][3]);
-		}
+			let color = colors.pop() || "#000000";
 
+
+			this.tempBorders[this.combo][0][2]=color;
+			this.tempBorders[this.combo][1][1]=color;
+			this.tempBorders[this.combo][2][0]=color;
+			this.combo += 1;
+		}
 		//if no win
 		if (this.winType === "") {
 			this.winType = "noWin";
