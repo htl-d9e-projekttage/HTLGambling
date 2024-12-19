@@ -4,17 +4,18 @@
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
-
 </script>
 
-<main class="container w-full mx-auto flex justify-center items-center h-screen">
+<main class="container mx-auto flex h-screen w-full items-center justify-center">
 	<Card class="w-full" size="md">
 		{#if data.approved}
-		<Badge class="mb-4" color="green">{data.explanation}</Badge>
+			<Badge class="mb-4" color="green">{data.explanation}</Badge>
 		{/if}
 		<Heading tag="h2" class="mb-4 text-center">Hi, {data.user.username}</Heading>
 		<p class="mb-4 text-center">You are logged in!</p>
-		<p class="mb-4 text-center">Your age is {data.user.age} and you have a balance of <mark>€ {data.user.money/100}</mark></p>
+		<p class="mb-4 text-center">
+			Your age is {data.user.age} and you have a balance of <mark>€ {data.user.money / 100}</mark>
+		</p>
 		<p class="mb-4 text-center">Streak: {data.user.streak} days</p>
 		<form method="post" action="?/logout" use:enhance>
 			<Button type="submit">Sign out</Button>

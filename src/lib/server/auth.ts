@@ -30,7 +30,15 @@ export async function validateSessionToken(token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const [result] = await db
 		.select({
-			user: { id: table.user.id, username: table.user.username, age: table.user.age, verified: table.user.verified, money: table.user.money, streak: table.user.streak, lastLogin: table.user.lastLogin},
+			user: {
+				id: table.user.id,
+				username: table.user.username,
+				age: table.user.age,
+				verified: table.user.verified,
+				money: table.user.money,
+				streak: table.user.streak,
+				lastLogin: table.user.lastLogin
+			},
 			session: table.session
 		})
 		.from(table.session)
@@ -88,10 +96,7 @@ export function getUserById(userId: string) {
 }
 
 export function verifyUser(userId: string) {
-	return db
-		.update(table.user)
-		.set({ verified: 1 })
-		.where(eq(table.user.id, userId));
+	return db.update(table.user).set({ verified: 1 }).where(eq(table.user.id, userId));
 }
 
 export function getAllUsers() {
@@ -99,7 +104,11 @@ export function getAllUsers() {
 }
 
 export function getMoney(userId: string) {
-	return db.select({ money: table.user.money }).from(table.user).where(eq(table.user.id, userId)).get()?.money;
+	return db
+		.select({ money: table.user.money })
+		.from(table.user)
+		.where(eq(table.user.id, userId))
+		.get()?.money;
 }
 
 export function updateMoney(userId: string, money: number) {
@@ -114,7 +123,11 @@ export async function addMoney(userId: string, amount: number) {
 }
 
 export function getLastLogin(userId: string) {
-	return db.select({ lastLogin: table.user.lastLogin }).from(table.user).where(eq(table.user.id, userId)).get()?.lastLogin;
+	return db
+		.select({ lastLogin: table.user.lastLogin })
+		.from(table.user)
+		.where(eq(table.user.id, userId))
+		.get()?.lastLogin;
 }
 
 export function updateLastLogin(userId: string) {
@@ -123,32 +136,41 @@ export function updateLastLogin(userId: string) {
 }
 
 export function getStreak(userId: string) {
-	return db.select({ streak: table.user.streak }).from(table.user).where(eq(table.user.id, userId)).get()?.streak;
+	return db
+		.select({ streak: table.user.streak })
+		.from(table.user)
+		.where(eq(table.user.id, userId))
+		.get()?.streak;
 }
 
 export async function updateStreak(userId: string) {
-    const currentDate = new Date();
-    const lastLogin = getLastLogin(userId);
-    if (!lastLogin) {
-        await updateLastLogin(userId);
-        return db.update(table.user).set({ streak: 1 }).where(eq(table.user.id, userId));
-    }
+	const currentDate = new Date();
+	const lastLogin = getLastLogin(userId);
+	if (!lastLogin) {
+		await updateLastLogin(userId);
+		return db.update(table.user).set({ streak: 1 }).where(eq(table.user.id, userId));
+	}
 
-    if (lastLogin.getTime() > currentDate.getTime()) {
-        throw new Error('Last login is in the future');
-    }
+	if (lastLogin.getTime() > currentDate.getTime()) {
+		throw new Error('Last login is in the future');
+	}
 
-    const daysBetween = Math.floor((currentDate.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24));
+	const daysBetween = Math.floor(
+		(currentDate.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24)
+	);
 
-    if (daysBetween > 1) {
-        await updateLastLogin(userId);
-        return db.update(table.user).set({ streak: 1 }).where(eq(table.user.id, userId));
-    } else if (daysBetween === 1) {
-        const currentStreak = getStreak(userId) || 0;
-        await updateLastLogin(userId);
+	if (daysBetween > 1) {
+		await updateLastLogin(userId);
+		return db.update(table.user).set({ streak: 1 }).where(eq(table.user.id, userId));
+	} else if (daysBetween === 1) {
+		const currentStreak = getStreak(userId) || 0;
+		await updateLastLogin(userId);
 		await addMoney(userId, 5000);
-        return db.update(table.user).set({ streak: currentStreak + 1 }).where(eq(table.user.id, userId));
-    }
+		return db
+			.update(table.user)
+			.set({ streak: currentStreak + 1 })
+			.where(eq(table.user.id, userId));
+	}
 
-    return null;
+	return null;
 }

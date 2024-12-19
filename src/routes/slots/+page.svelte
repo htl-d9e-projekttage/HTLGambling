@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FallingMoney from '$lib/components/FallingMoney.svelte';
 	import type { PageServerData } from './$types';
-	import { Button, Input, Table, TableBody, TableBodyCell, TableBodyRow } from 'flowbite-svelte';
+	import { Button } from 'flowbite-svelte';
 
 	let { data }: { data: PageServerData } = $props();
 
@@ -24,15 +24,15 @@
 
 	const winSound = new Audio('/sounds/win.mp3');
 
-	let borderColor1:undefined|string = $state(undefined);
-	let borderColor2:undefined|string = $state(undefined);
-	let borderColor3:undefined|string = $state(undefined);
-	let borderColor4:undefined|string = $state(undefined);
-	let borderColor5:undefined|string = $state(undefined);
-	let borderColor6:undefined|string = $state(undefined);
-	let borderColor7:undefined|string = $state(undefined);
-	let borderColor8:undefined|string = $state(undefined);
-	let borderColor9:undefined|string = $state(undefined);
+	let borderColor1: undefined | string = $state(undefined);
+	let borderColor2: undefined | string = $state(undefined);
+	let borderColor3: undefined | string = $state(undefined);
+	let borderColor4: undefined | string = $state(undefined);
+	let borderColor5: undefined | string = $state(undefined);
+	let borderColor6: undefined | string = $state(undefined);
+	let borderColor7: undefined | string = $state(undefined);
+	let borderColor8: undefined | string = $state(undefined);
+	let borderColor9: undefined | string = $state(undefined);
 
 	function updateColor(colorMap: string[][][], index = 0) {
 		if (colorMap[index].length != 3 || colorMap[index][0].length != 3) {
@@ -77,10 +77,10 @@
 		borderColor7 = undefined;
 		borderColor8 = undefined;
 		borderColor9 = undefined;
-		
+
 		errorMsg = '';
 		spinIsOnGoing = true;
-		fetch(`/api/spin?bet=${(bet * 100)}`, {
+		fetch(`/api/spin?bet=${bet * 100}`, {
 			method: 'POST'
 		})
 			.then((res) => {
@@ -90,9 +90,8 @@
 				return res.json();
 			})
 			.then((data) => {
-				if (rotateInterval){
+				if (rotateInterval) {
 					clearInterval(rotateInterval);
-
 				}
 				currentSlotFace = data;
 				money -= bet;
@@ -121,12 +120,11 @@
 
 	let rotateInterval: string | number | NodeJS.Timeout | undefined;
 
-	
 	function startIntervals() {
 		setTimeout(() => {
 			lane1Done = false;
 			lane1Interval = setInterval(() => {
-				lane1Index = (lane1Index + 1) % (currentSlotFace.lane1.length);
+				lane1Index = (lane1Index + 1) % currentSlotFace.lane1.length;
 				if (lane1Done && currentSlotFace.winIndex1 == lane1Index) {
 					clearInterval(lane1Interval);
 					lane1Done = false;
@@ -136,7 +134,7 @@
 
 		setTimeout(() => {
 			lane2Interval = setInterval(() => {
-				lane2Index = (lane2Index + 1) % (currentSlotFace.lane2.length);
+				lane2Index = (lane2Index + 1) % currentSlotFace.lane2.length;
 				if (lane2Done && currentSlotFace.winIndex2 == lane2Index) {
 					clearInterval(lane2Interval);
 					lane2Done = false;
@@ -147,7 +145,7 @@
 		setTimeout(() => {
 			lastStart = true;
 			lane3Interval = setInterval(() => {
-				lane3Index = (lane3Index + 1) % (currentSlotFace.lane3.length);
+				lane3Index = (lane3Index + 1) % currentSlotFace.lane3.length;
 				if (lane3Done && currentSlotFace.winIndex3 == lane3Index) {
 					clearInterval(lane3Interval);
 					money += currentSlotFace.moneyWon / 100;
@@ -165,10 +163,10 @@
 					lastStart = false;
 					isStopping = false;
 					rotateInterval = undefined;
-					if (currentSlotFace.combo > 0){
+					if (currentSlotFace.combo > 0) {
 						let i = 0;
 						rotateInterval = setInterval(() => {
-							console.log(i % currentSlotFace.combo + 1);
+							console.log((i % currentSlotFace.combo) + 1);
 							updateColor(currentSlotFace.borders, i % (currentSlotFace.combo + 1));
 							i++;
 						}, 500);
@@ -179,41 +177,39 @@
 
 		let stop = Math.floor(Math.random() * 500) + 2000; // Random time to stop all lanes
 
-
 		stopTimer = setTimeout(() => {
 			stopSpin();
 		}, stop); // Random time to stop lane3
-
 	}
 
 	function stopSpin() {
-			lane1Done = true;
-			lane2Done = true;
-			lane3Done = true;
+		lane1Done = true;
+		lane2Done = true;
+		lane3Done = true;
 
-			isStopping = true;
-			clearTimeout(stopTimer);
-			//set the correct faces
+		isStopping = true;
+		clearTimeout(stopTimer);
+		//set the correct faces
 
-			lane1Index = currentSlotFace.winIndex1 - 3;
-			lane2Index = currentSlotFace.winIndex2 - 6;
-			lane3Index = currentSlotFace.winIndex3 - 10;
-			if (lane1Index < 0) {
-				lane1Index += currentSlotFace.lane1.length-1;
-			}
-			if (lane2Index < 0) {
-				lane2Index += currentSlotFace.lane2.length-2;
-			}
-			if (lane3Index < 0) {
-				lane3Index += currentSlotFace.lane3.length-3;
-			}
+		lane1Index = currentSlotFace.winIndex1 - 3;
+		lane2Index = currentSlotFace.winIndex2 - 6;
+		lane3Index = currentSlotFace.winIndex3 - 10;
+		if (lane1Index < 0) {
+			lane1Index += currentSlotFace.lane1.length - 1;
+		}
+		if (lane2Index < 0) {
+			lane2Index += currentSlotFace.lane2.length - 2;
+		}
+		if (lane3Index < 0) {
+			lane3Index += currentSlotFace.lane3.length - 3;
+		}
 	}
 
 	//on spacebar press spinclearInterval
 	window.addEventListener('keydown', (e) => {
 		if (e.key === ' ') {
 			e.preventDefault();
-			if (!spinIsOnGoing){
+			if (!spinIsOnGoing) {
 				spin();
 			} else if (lastStart && !isStopping) {
 				isStopping = true;
@@ -224,85 +220,84 @@
 
 	let isStopping = $state(false);
 </script>
-<div class="flex h-full items-center justify-center mt-20">
+
+<div class="mt-20 flex h-full items-center justify-center">
 	{#if !spinIsOnGoing && currentSlotFace.moneyWon > 0}
 		<FallingMoney />
 	{/if}
-	<div id="file1" class="border-8 border-crust border-r-0">
+	<div id="file1" class="border-8 border-r-0 border-crust">
 		<img
-            class={borderColor1 ? `border-[${borderColor1}] border-8` : ''}
-            src={`/symbols/Logos/${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}
-        />
-        <img
-            class={borderColor2 ? `border-[${borderColor2}] border-8` : ''}
-            src={`/symbols/Logos/${currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length]}${currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length]}
-        />
-        <img
-            class={borderColor3 ? `border-[${borderColor3}] border-8` : ''}
-            src={`/symbols/Logos/${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}
-        />
-	</div>
-	<div id="file2" class="border-8 border-crust border-l-0 border-r-0">
+			class={borderColor1 ? `border-[${borderColor1}] border-8` : ''}
+			src={`/symbols/Logos/${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}${currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane1[(lane1Index + 2) % currentSlotFace.lane1.length]}
+		/>
 		<img
-            class={borderColor4 ? `border-[${borderColor4}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}
-        />
-        <img
-            class={borderColor5 ? `border-[${borderColor5}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length]}${currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length]}
-        />
-        <img
-            class={borderColor6 ? `border-[${borderColor6}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}
-        />
-	</div>
-	<div id="file3" class="border-8 border-crust border-l-0">
+			class={borderColor2 ? `border-[${borderColor2}] border-8` : ''}
+			src={`/symbols/Logos/${currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length]}${currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane1[(lane1Index + 1) % currentSlotFace.lane1.length]}
+		/>
 		<img
-            class={borderColor7 ? `border-[${borderColor7}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}
-        />
-        <img
-            class={borderColor8 ? `border-[${borderColor8}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length]}${currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length]}
-        />
-        <img
-            class={borderColor9 ? `border-[${borderColor9}] border-8` : ''}
-            src={`symbols/Logos/${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
-            alt={currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}
-        />
+			class={borderColor3 ? `border-[${borderColor3}] border-8` : ''}
+			src={`/symbols/Logos/${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}${currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane1[lane1Index % currentSlotFace.lane1.length]}
+		/>
 	</div>
-	<div class="p-7 bg-crust">
-		<p class="mb-1 text-xl text-white font-inta font-bold">Money: ${money}</p>
-		<input class="mt-1 mb-1 w-full text-black" bind:value={bet} min={1} max={money} type="number"/> <br>
-		<Button class="mt-1 w-full font-inta font-bold" disabled={(!lastStart && spinIsOnGoing) || isStopping} on:click={() =>{
-			if (!spinIsOnGoing){
-				spin();
-			} else {
-				stopSpin();
-			}
-		}}>
-	{spinIsOnGoing ? 'STOP!!!' : 'Spin'}
+	<div id="file2" class="border-8 border-l-0 border-r-0 border-crust">
+		<img
+			class={borderColor4 ? `border-[${borderColor4}] border-8` : ''}
+			src={`symbols/Logos/${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}${currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane2[(lane2Index + 2) % currentSlotFace.lane2.length]}
+		/>
+		<img
+			class={borderColor5 ? `border-[${borderColor5}] border-8` : ''}
+			src={`symbols/Logos/${currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length]}${currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane2[(lane2Index + 1) % currentSlotFace.lane2.length]}
+		/>
+		<img
+			class={borderColor6 ? `border-[${borderColor6}] border-8` : ''}
+			src={`symbols/Logos/${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}${currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane2[lane2Index % currentSlotFace.lane2.length]}
+		/>
+	</div>
+	<div id="file3" class="border-8 border-l-0 border-crust">
+		<img
+			class={borderColor7 ? `border-[${borderColor7}] border-8` : ''}
+			src={`symbols/Logos/${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}${currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane3[(lane3Index + 2) % currentSlotFace.lane3.length]}
+		/>
+		<img
+			class={borderColor8 ? `border-[${borderColor8}] border-8` : ''}
+			src={`symbols/Logos/${currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length]}${currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane3[(lane3Index + 1) % currentSlotFace.lane3.length]}
+		/>
+		<img
+			class={borderColor9 ? `border-[${borderColor9}] border-8` : ''}
+			src={`symbols/Logos/${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}${currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length] == 'linux' ? '.gif' : '.svg'}`}
+			alt={currentSlotFace.lane3[lane3Index % currentSlotFace.lane3.length]}
+		/>
+	</div>
+	<div class="bg-crust p-7">
+		<p class="mb-1 font-inta text-xl font-bold text-white">Money: ${money}</p>
+		<input class="mb-1 mt-1 w-full text-black" bind:value={bet} min={1} max={money} type="number" />
+		<br />
+		<Button
+			class="mt-1 w-full font-inta font-bold"
+			disabled={(!lastStart && spinIsOnGoing) || isStopping}
+			on:click={() => {
+				if (!spinIsOnGoing) {
+					spin();
+				} else {
+					stopSpin();
+				}
+			}}
+		>
+			{spinIsOnGoing ? 'STOP!!!' : 'Spin'}
 		</Button>
 		{#if errorMsg}
-		<p>{errorMsg}</p>
+			<p>{errorMsg}</p>
 		{/if}
 	</div>
 </div>
-
-<style>
-	img {
-		width: 200px;
-		height: 200px;
-	}
-</style>
 
 <div class="invisible border-[#FF0000]"></div>
 <div class="invisible border-[#00FF00]"></div>
@@ -312,8 +307,6 @@
 <div class="invisible border-[#00FFFF]"></div>
 <div class="invisible border-[#800000]"></div>
 <div class="invisible border-[#800000]"></div>
-
-
 
 <!--
     		let colors = [
@@ -332,3 +325,10 @@
 			"#DC143C"  // Crimson
 		];
 -->
+
+<style>
+	img {
+		width: 200px;
+		height: 200px;
+	}
+</style>

@@ -42,7 +42,10 @@ export const actions: Actions = {
 		});
 
 		try {
-			await db.insert(table.user).values({ id: userId, username, passwordHash, age: parseInt(age) }).execute();
+			await db
+				.insert(table.user)
+				.values({ id: userId, username, passwordHash, age: parseInt(age) })
+				.execute();
 
 			const sessionToken = auth.generateSessionToken();
 			const session = await auth.createSession(sessionToken, userId);
