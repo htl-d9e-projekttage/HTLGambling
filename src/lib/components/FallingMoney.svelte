@@ -26,10 +26,11 @@
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 10;
+      z-index: 25;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
+      pointer-events: none;
       background-color: rgba(243, 243, 243, 0)
     }
   

@@ -10,6 +10,7 @@
 		<NavUl>
 			<NavLi href="/">Home</NavLi>
 			<NavLi href="/slots">Slots</NavLi>
+      <NavLi href="/blackjack">Blackjack</NavLi>
 			<NavLi href="/aboutus">About Us</NavLi>
 			<NavLi href="/auth">User</NavLi>
 		</NavUl>

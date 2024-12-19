@@ -1,7 +1,6 @@
 import { env } from '$env/dynamic/private';
 import * as crypto from "crypto";
 
-
 const serverSeed = env.SERVER_SEED?.toString() || "nothing :(";
 export function hmacSHA256(clientSeed: string, nonce: number): string {
     const message = `${clientSeed}:${nonce}`; // Combine client seed and nonce
