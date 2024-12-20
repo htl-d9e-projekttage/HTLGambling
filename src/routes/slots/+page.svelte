@@ -61,6 +61,10 @@
 		if (spinIsOnGoing) {
 			return;
 		}
+		if (bet <= 0) {
+			errorMsg = 'Bet must be greater than 0';
+			return;
+		}
 		if (bet > money) {
 			errorMsg = 'Balance too low';
 			return;

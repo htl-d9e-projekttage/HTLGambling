@@ -15,7 +15,16 @@ export const POST = async (request) => {
 		slotUserMap.set(request.locals.user.id, slot);
 	}
 
-	const bet = await request.url.searchParams.get('bet');
+	const bet = request.url.searchParams.get('bet');
+
+	if (Number(bet) <= 0) {
+		return new Response(JSON.stringify({ error: 'invalid bet' }), {
+			headers: {
+				'content-type': 'application/json'
+			},
+			status: 400
+		});
+	}
 
 	try {
 		slot.setBet(Number(bet));
@@ -32,10 +41,10 @@ export const POST = async (request) => {
 	let ret = slot.getCurrentSpin();
 
 	//update user money
-	console.log(ret.moneyWon);
-	console.log(Number(bet));
-	console.log(ret.moneyWon - Number(bet));
-	console.log('money: ' + getMoney(request.locals.user.id));
+	// console.log(ret.moneyWon);
+	// console.log(Number(bet));
+	// console.log(ret.moneyWon - Number(bet));
+	// console.log('money: ' + getMoney(request.locals.user.id));
 	await addMoney(request.locals.user.id, ret.moneyWon - Number(bet));
 
 	return new Response(JSON.stringify(ret), {
