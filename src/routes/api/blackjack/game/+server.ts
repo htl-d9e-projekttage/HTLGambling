@@ -1,5 +1,5 @@
 import { BlackjackGame } from '$lib/server/bj_game';
-import { runningBJGames } from '$lib/server/serverStores';
+import { runningBJGames, slotUserMap } from '$lib/server/serverStores';
 import { json } from '@sveltejs/kit';
 
 export async function POST({ request, locals }) {
@@ -44,6 +44,7 @@ export async function DELETE({ locals }) {
 	}
 
 	runningBJGames.delete(user.id);
+	slotUserMap.delete(user.id); // remove user from slot
 	return json({ message: 'Game deleted' });
 }
 
