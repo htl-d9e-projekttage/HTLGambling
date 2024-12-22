@@ -88,7 +88,7 @@
 
 		errorMsg = '';
 		spinIsOnGoing = true;
-		fetch(`/api/spin?bet=${bet * 100}`, {
+		fetch(`/api/spin?bet=${(bet * 100).toLocaleString('fullwide', { useGrouping: false })}`, {
 			method: 'POST'
 		})
 			.then((res) => {
