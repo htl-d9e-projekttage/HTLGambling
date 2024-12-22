@@ -510,9 +510,9 @@ export class Slots {
 	private getWinMultiplier(symbol: string): number {
 		// @ts-ignore
 		return (
-			this.symbols.lo[symbol].multiplier ||
-			this.symbols.mid[symbol].multiplier ||
-			this.symbols.hi[symbol].multiplier
+			this.symbols.lo[symbol]?.multiplier ||
+			this.symbols.mid[symbol]?.multiplier ||
+			this.symbols.hi[symbol]?.multiplier
 		);
 	}
 

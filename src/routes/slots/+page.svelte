@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FallingMoney from '$lib/components/FallingMoney.svelte';
 	import type { PageServerData } from './$types';
-	import { Button } from 'flowbite-svelte';
+	import { Button, Checkbox } from 'flowbite-svelte';
 
 	let { data }: { data: PageServerData } = $props();
 
@@ -13,6 +13,8 @@
 
 	let user = data.props.user;
 	let slot = data.props.currentSlotFace;
+
+	let autospin = $state(false);
 
 	let spinIsOnGoing = $state(false);
 
@@ -63,10 +65,12 @@
 		}
 		if (bet <= 0) {
 			errorMsg = 'Bet must be greater than 0';
+			autospin = false;
 			return;
 		}
 		if (bet > money) {
 			errorMsg = 'Balance too low';
+			autospin = false;
 			return;
 		}
 		winSound.pause();
@@ -89,6 +93,7 @@
 		})
 			.then((res) => {
 				if (!res.ok) {
+					autospin = false;
 					throw new Error('Failed to spin');
 				}
 				return res.json();
@@ -170,10 +175,14 @@
 					if (currentSlotFace.combo > 0) {
 						let i = 0;
 						rotateInterval = setInterval(() => {
-							console.log((i % currentSlotFace.combo) + 1);
 							updateColor(currentSlotFace.borders, i % (currentSlotFace.combo + 1));
 							i++;
 						}, 500);
+					}
+					if (autospin) {
+						setTimeout(() => {
+							spin();
+						}, 1000);
 					}
 				}
 			}, 50);
@@ -218,6 +227,11 @@
 			} else if (lastStart && !isStopping) {
 				isStopping = true;
 				stopSpin();
+				if (autospin) {
+					setTimeout(() => {
+						spin();
+					}, 1000);
+				}
 			}
 		}
 	});
@@ -292,11 +306,19 @@
 					spin();
 				} else {
 					stopSpin();
+					if (autospin) {
+						setTimeout(() => {
+							spin();
+						}, 1000);
+					}
 				}
 			}}
 		>
 			{spinIsOnGoing ? 'STOP!!!' : 'Spin'}
 		</Button>
+		<Checkbox bind:checked={autospin} class="mt-1" disabled={bet <= 0}>
+			Autospin
+		</Checkbox>
 		{#if errorMsg}
 			<p>{errorMsg}</p>
 		{/if}
